@@ -4,26 +4,27 @@ using Padutronics.DependencyInjection.Resolution.Activation.Activators;
 using Padutronics.Reflection.Constructors.Finders;
 using Padutronics.Reflection.Constructors.Selectors;
 using System;
+using System.Collections.Generic;
 
 namespace Padutronics.DependencyInjection.Registration;
 
 internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuilder, ILifetimeStage, IOwnershipStage
 {
-    private readonly Type serviceType;
+    private readonly IEnumerable<Type> serviceTypes;
 
     private IActivator? activator;
     private bool isOwnedByContainer = true;
 
-    protected BindingDescriptionBuilderBase(Type serviceType)
+    protected BindingDescriptionBuilderBase(IEnumerable<Type> serviceTypes)
     {
-        this.serviceType = serviceType;
+        this.serviceTypes = serviceTypes;
     }
 
     public BindingDescription Build()
     {
         if (activator is null)
         {
-            throw new InvalidOperationException($"Registration for service of type {serviceType} was not completed.");
+            throw new InvalidOperationException($"Registration for services of types {{ {string.Join(", ", serviceTypes)} }} was not completed.");
         }
 
         if (isOwnedByContainer)
@@ -31,7 +32,7 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
             activator = new DisposableActivator(activator);
         }
 
-        return new BindingDescription(serviceType, activator);
+        return new BindingDescription(serviceTypes, activator);
     }
 
     public void ExternallyOwned()
@@ -53,7 +54,7 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
     {
         if (activator is null)
         {
-            throw new InvalidOperationException($"Activator for service of type {serviceType} was not configured.");
+            throw new InvalidOperationException($"Activator for services of types {{ {string.Join(", ", serviceTypes)} }} was not configured.");
         }
 
         activator = new SharedInstanceActivator(activator);

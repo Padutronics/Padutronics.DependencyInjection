@@ -7,7 +7,7 @@ namespace Padutronics.DependencyInjection.Registration;
 internal sealed class BindingDescriptionBuilder : BindingDescriptionBuilderBase, IBindingStage
 {
     public BindingDescriptionBuilder(Type serviceType) :
-        base(serviceType)
+        base(new[] { serviceType })
     {
     }
 

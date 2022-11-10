@@ -1,17 +1,18 @@
 using Padutronics.DependencyInjection.Resolution.Activation.Activators;
 using System;
+using System.Collections.Generic;
 
 namespace Padutronics.DependencyInjection.Registration;
 
 internal sealed class BindingDescription
 {
-    public BindingDescription(Type serviceType, IActivator activator)
+    public BindingDescription(IEnumerable<Type> serviceTypes, IActivator activator)
     {
         Activator = activator;
-        ServiceType = serviceType;
+        ServiceTypes = serviceTypes;
     }
 
     public IActivator Activator { get; }
 
-    public Type ServiceType { get; }
+    public IEnumerable<Type> ServiceTypes { get; }
 }

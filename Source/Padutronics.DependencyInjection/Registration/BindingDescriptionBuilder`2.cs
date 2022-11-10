@@ -4,22 +4,23 @@ using Padutronics.Reflection.Types;
 
 namespace Padutronics.DependencyInjection.Registration;
 
-internal sealed class BindingDescriptionBuilder<TService> : BindingDescriptionBuilderBase, IBindingStage<TService>
-    where TService : class
+internal sealed class BindingDescriptionBuilder<TService1, TService2> : BindingDescriptionBuilderBase, IBindingStage<TService1, TService2>
+    where TService1 : class
+    where TService2 : class
 {
     public BindingDescriptionBuilder() :
-        base(TypeArray.Create<TService>())
+        base(TypeArray.Create<TService1, TService2>())
     {
     }
 
     public ILifetimeStage Use<TImplementation>()
-        where TImplementation : class, TService
+        where TImplementation : class, TService1, TService2
     {
         return Use(typeof(TImplementation));
     }
 
     public IOwnershipStage UseConstant<TImplementation>(TImplementation instance)
-        where TImplementation : class, TService
+        where TImplementation : class, TService1, TService2
     {
         return UseProvider(new ConstantInstanceProvider<TImplementation>(instance));
     }

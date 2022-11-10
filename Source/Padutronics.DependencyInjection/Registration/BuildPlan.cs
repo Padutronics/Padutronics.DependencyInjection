@@ -17,7 +17,7 @@ internal sealed class BuildPlan : IBuildPlan
     {
         return bindingDescriptionBuilders
             .Select(bindingDescriptionBuilder => bindingDescriptionBuilder.Build())
-            .Select(bindingDescription => new Binding(bindingDescription.ServiceType, bindingDescription.Activator))
+            .SelectMany(bindingDescription => bindingDescription.ServiceTypes.Select(serviceType => new Binding(serviceType, bindingDescription.Activator)))
             .ToList();
     }
 }

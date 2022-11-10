@@ -1,5 +1,6 @@
 using Padutronics.DependencyInjection.Registration;
 using Padutronics.DependencyInjection.Registration.Fluent;
+using Padutronics.DependencyInjection.Resolution.Activation.ValueProviders;
 using Padutronics.DependencyInjection.Storages;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,16 @@ public sealed class ContainerBuilder : IContainerBuilder
 
     public IContainer Build()
     {
+        var valueProviders = new IValueProvider[]
+        {
+            new AutowiringValueProvider(),
+            /// <see cref="DefaultValueProvider" /> must be placed last to supply default value only if all other providers have failed to supply a value.
+            new DefaultValueProvider()
+        };
+
         IStorage storage = BuildStorage();
 
-        return new Container(storage);
+        return new Container(storage, valueProviders);
     }
 
     private IStorage BuildStorage()

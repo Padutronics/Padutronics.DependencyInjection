@@ -15,4 +15,7 @@
         <RepositoryUrl>https://github.com/Padutronics/Padutronics.DependencyInjection</RepositoryUrl>
         <RepositoryType>Git</RepositoryType>
     </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Padutronics.Reflection" Version="0.1.0" />
+    </ItemGroup>
 </Project>

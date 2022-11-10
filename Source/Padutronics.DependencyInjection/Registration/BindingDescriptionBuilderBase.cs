@@ -1,4 +1,6 @@
 using Padutronics.DependencyInjection.Resolution.Activation.Activators;
+using Padutronics.Reflection.Constructors.Finders;
+using Padutronics.Reflection.Constructors.Selectors;
 using System;
 
 namespace Padutronics.DependencyInjection.Registration;
@@ -26,6 +28,6 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
 
     public void Use(Type implementationType)
     {
-        activator = new TypeActivator(implementationType);
+        activator = new TypeActivator(implementationType, new PublicConstructorFinder(), new LongestConstructorSelector());
     }
 }

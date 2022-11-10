@@ -135,7 +135,21 @@ internal sealed class TypeActivator : IActivator
         IEnumerable<ConstructorInfo> instantiableConstructors = GetInstantiableConstructors(foundConstructors, session);
         if (!instantiableConstructors.Any())
         {
-            throw new InvalidOperationException($"Multiple constructors on type {targetType} found with constructor finder {constructorFinder}, but none can be instantiated.");
+            if (foundConstructors.Count() == 1)
+            {
+                ParameterInfo[] parameters = foundConstructors.Single().GetParameters();
+                foreach (ParameterInfo parameter in parameters)
+                {
+                    if (!session.AllValueProviders.Any(valueProvider => valueProvider.CanGetValue(parameter, session.ContainerContext)))
+                    {
+                        session.ContainerContext.Resolve(parameter.ParameterType, session.AdditionalValueProviders);
+                    }
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException($"Multiple constructors on type {targetType} found with constructor finder {constructorFinder}, but none can be instantiated.");
+            }
         }
 
         IEnumerable<ConstructorInfo> selectedConstructors = constructorSelector.SelectConstructors(instantiableConstructors);

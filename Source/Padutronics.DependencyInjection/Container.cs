@@ -34,7 +34,7 @@ internal sealed class Container : DisposableObject, IContainer
 
         if (storage.TryGetBinding(serviceType, out Binding? binding))
         {
-            ActivationSession session = CreateActivationSession();
+            ActivationSession session = CreateActivationSession(serviceType);
 
             canResolve = binding.Activator.CanGetInstance(session);
         }
@@ -48,9 +48,9 @@ internal sealed class Container : DisposableObject, IContainer
         return CanResolve(typeof(TService));
     }
 
-    private ActivationSession CreateActivationSession()
+    private ActivationSession CreateActivationSession(Type serviceType)
     {
-        return new ActivationSession(containerContext: this, scope, valueProviders);
+        return new ActivationSession(serviceType, containerContext: this, scope, valueProviders);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -65,7 +65,7 @@ internal sealed class Container : DisposableObject, IContainer
     {
         if (storage.TryGetBinding(serviceType, out Binding? binding))
         {
-            ActivationSession session = CreateActivationSession();
+            ActivationSession session = CreateActivationSession(serviceType);
 
             return binding.Activator.GetInstance(session);
         }

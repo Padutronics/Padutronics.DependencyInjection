@@ -36,6 +36,22 @@ internal sealed class Storage : IStorage
 
     public bool TryGetBinding(Type serviceType, [NotNullWhen(true)] out Binding? binding)
     {
-        return serviceTypeToBindingMappings.TryGetValue(serviceType, out binding);
+        var isBindingFound = true;
+
+        if (!serviceTypeToBindingMappings.TryGetValue(serviceType, out binding))
+        {
+            if (serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
+            {
+                Type openGenericServiceType = serviceType.GetGenericTypeDefinition();
+
+                isBindingFound = TryGetBinding(openGenericServiceType, out binding);
+            }
+            else
+            {
+                isBindingFound = false;
+            }
+        }
+
+        return isBindingFound;
     }
 }

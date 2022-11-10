@@ -26,7 +26,9 @@ internal sealed class TypeActivator : IActivator
     {
         var canGetInstance = false;
 
-        if (TrySelectConstructor(type, session, out ConstructorInfo? selectedConstructor))
+        Type instanceType = GetInstanceType(session);
+
+        if (TrySelectConstructor(instanceType, session, out ConstructorInfo? selectedConstructor))
         {
             var canGetAllValues = true;
 
@@ -59,7 +61,9 @@ internal sealed class TypeActivator : IActivator
 
     public object GetInstance(ActivationSession session)
     {
-        ConstructorInfo selectedConstructor = SelectConstructor(type, session);
+        Type instanceType = GetInstanceType(session);
+
+        ConstructorInfo selectedConstructor = SelectConstructor(instanceType, session);
 
         object?[] parameters = GetParameters(selectedConstructor, session);
 
@@ -68,7 +72,9 @@ internal sealed class TypeActivator : IActivator
 
     public Type GetInstanceType(ActivationSession session)
     {
-        return type;
+        return type.IsGenericTypeDefinition
+            ? type.MakeGenericType(session.ServiceType.GetGenericArguments())
+            : type;
     }
 
     private IEnumerable<ConstructorInfo> GetInstantiableConstructors(IEnumerable<ConstructorInfo> constructors, ActivationSession session)

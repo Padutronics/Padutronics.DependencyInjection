@@ -5,6 +5,7 @@ using Padutronics.Reflection.Constructors.Finders;
 using Padutronics.Reflection.Constructors.Selectors;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Padutronics.DependencyInjection.Registration;
 
@@ -75,5 +76,10 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
         activator = new InstanceProviderActivator<TImplementation>(instanceProvider);
 
         return this;
+    }
+
+    public ILifetimeStage UseSelf()
+    {
+        return Use(serviceTypes.Single());
     }
 }

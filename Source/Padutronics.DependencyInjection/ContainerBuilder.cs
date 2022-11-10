@@ -78,4 +78,17 @@ public sealed class ContainerBuilder : IContainerBuilder
     {
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder<TService1, TService2, TService3>());
     }
+
+    public IContainerBuilder IncludeModule(IContainerModule module)
+    {
+        module.Load(containerBuilder: this);
+
+        return this;
+    }
+
+    public IContainerBuilder IncludeModule<TModule>()
+        where TModule : IContainerModule, new()
+    {
+        return IncludeModule(new TModule());
+    }
 }

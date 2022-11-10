@@ -17,4 +17,7 @@ public interface IContainerBuilder
         where TService1 : class
         where TService2 : class
         where TService3 : class;
+    IContainerBuilder IncludeModule(IContainerModule module);
+    IContainerBuilder IncludeModule<TModule>()
+        where TModule : IContainerModule, new();
 }

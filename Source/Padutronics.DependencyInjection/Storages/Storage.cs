@@ -29,7 +29,17 @@ internal sealed class Storage : IStorage
     {
         Type serviceType = typeof(TImplementation);
 
-        var binding = new Binding(serviceType, new InstanceProviderActivator<TImplementation>(new ConstantInstanceProvider<TImplementation>(instance)));
+        var binding = new Binding(
+            serviceType,
+            new DefaultProfileProvider(
+                new Profile(
+                    new InstanceProviderActivator<TImplementation>(
+                        new ConstantInstanceProvider<TImplementation>(instance)
+                    ),
+                    isFallback: false
+                )
+            )
+        );
 
         AddBinding(serviceType, binding);
     }

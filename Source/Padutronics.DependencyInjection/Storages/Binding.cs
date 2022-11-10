@@ -1,17 +1,16 @@
-using Padutronics.DependencyInjection.Resolution.Activation.Activators;
 using System;
 
 namespace Padutronics.DependencyInjection.Storages;
 
 internal sealed class Binding
 {
-    public Binding(Type serviceType, IActivator activator)
+    public Binding(Type serviceType, IProfileProvider profileProvider)
     {
-        Activator = activator;
+        ProfileProvider = profileProvider;
         ServiceType = serviceType;
     }
 
-    public IActivator Activator { get; }
+    public IProfileProvider ProfileProvider { get; }
 
     public Type ServiceType { get; }
 }

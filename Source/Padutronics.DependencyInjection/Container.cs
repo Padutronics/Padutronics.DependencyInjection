@@ -36,7 +36,7 @@ internal sealed class Container : DisposableObject, IContainer
         {
             ActivationSession session = CreateActivationSession(serviceType);
 
-            canResolve = binding.Activator.CanGetInstance(session);
+            canResolve = binding.ProfileProvider.DefaultProfile.Activator.CanGetInstance(session);
         }
 
         return canResolve;
@@ -67,7 +67,7 @@ internal sealed class Container : DisposableObject, IContainer
         {
             ActivationSession session = CreateActivationSession(serviceType);
 
-            return binding.Activator.GetInstance(session);
+            return binding.ProfileProvider.DefaultProfile.Activator.GetInstance(session);
         }
 
         throw new InvalidOperationException($"Service of type {serviceType} is not registered.");

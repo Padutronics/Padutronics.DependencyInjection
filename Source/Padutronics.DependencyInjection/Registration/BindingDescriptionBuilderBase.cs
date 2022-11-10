@@ -14,6 +14,7 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
     private readonly IEnumerable<Type> serviceTypes;
 
     private IActivator? activator;
+    private bool isFallback;
     private bool isOwnedByContainer = true;
 
     protected BindingDescriptionBuilderBase(IEnumerable<Type> serviceTypes)
@@ -33,7 +34,7 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
             activator = new DisposableActivator(activator);
         }
 
-        return new BindingDescription(serviceTypes, activator);
+        return new BindingDescription(serviceTypes, activator, isFallback);
     }
 
     public void ExternallyOwned()
@@ -44,6 +45,13 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
     public void InstancePerDependency()
     {
         // Do nothing.
+    }
+
+    protected T MarkAsFallbackAndReturn<T>(T value)
+    {
+        isFallback = true;
+
+        return value;
     }
 
     public void OwnedByContainer()

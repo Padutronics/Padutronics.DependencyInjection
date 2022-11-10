@@ -17,7 +17,26 @@ internal sealed class BuildPlan : IBuildPlan
     {
         return bindingDescriptionBuilders
             .Select(bindingDescriptionBuilder => bindingDescriptionBuilder.Build())
-            .SelectMany(bindingDescription => bindingDescription.ServiceTypes.Select(serviceType => new Binding(serviceType, bindingDescription.Activator)))
+            .SelectMany(
+                bindingDescription => bindingDescription.ServiceTypes.Select(
+                    serviceType => new
+                    {
+                        Profile = new Profile(bindingDescription.Activator, bindingDescription.IsFallback),
+                        ServiceType = serviceType
+                    }
+                )
+            )
+            .GroupBy(bindingData => bindingData.ServiceType)
+            .ToDictionary(
+                serviceTypeToBindingDataMapping => serviceTypeToBindingDataMapping.Key,
+                serviceTypeToBindingDataMapping => serviceTypeToBindingDataMapping.Select(bindingData => bindingData.Profile)
+            )
+            .Select(
+                serviceTypeToProfilesMapping => new Binding(
+                    serviceTypeToProfilesMapping.Key,
+                    new AllProfileProvider(serviceTypeToProfilesMapping.Value)
+                )
+            )
             .ToList();
     }
 }

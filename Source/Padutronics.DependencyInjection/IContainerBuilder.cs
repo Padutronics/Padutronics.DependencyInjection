@@ -6,14 +6,14 @@ namespace Padutronics.DependencyInjection;
 
 public interface IContainerBuilder
 {
-    IBindingStage For(params Type[] serviceTypes);
-    IBindingStage For(IEnumerable<Type> serviceTypes);
-    IBindingStage<TService> For<TService>()
+    IFallbackBindingStage For(params Type[] serviceTypes);
+    IFallbackBindingStage For(IEnumerable<Type> serviceTypes);
+    IFallbackBindingStage<TService> For<TService>()
         where TService : class;
-    IBindingStage<TService1, TService2> For<TService1, TService2>()
+    IFallbackBindingStage<TService1, TService2> For<TService1, TService2>()
         where TService1 : class
         where TService2 : class;
-    IBindingStage<TService1, TService2, TService3> For<TService1, TService2, TService3>()
+    IFallbackBindingStage<TService1, TService2, TService3> For<TService1, TService2, TService3>()
         where TService1 : class
         where TService2 : class
         where TService3 : class;

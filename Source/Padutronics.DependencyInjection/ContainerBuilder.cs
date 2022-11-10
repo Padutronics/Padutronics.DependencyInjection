@@ -42,30 +42,30 @@ public sealed class ContainerBuilder : IContainerBuilder
         return new Storage(bindings);
     }
 
-    public IBindingStage For(params Type[] serviceTypes)
+    public IFallbackBindingStage For(params Type[] serviceTypes)
     {
         return For((IEnumerable<Type>)serviceTypes);
     }
 
-    public IBindingStage For(IEnumerable<Type> serviceTypes)
+    public IFallbackBindingStage For(IEnumerable<Type> serviceTypes)
     {
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder(serviceTypes));
     }
 
-    public IBindingStage<TService> For<TService>()
+    public IFallbackBindingStage<TService> For<TService>()
         where TService : class
     {
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder<TService>());
     }
 
-    public IBindingStage<TService1, TService2> For<TService1, TService2>()
+    public IFallbackBindingStage<TService1, TService2> For<TService1, TService2>()
         where TService1 : class
         where TService2 : class
     {
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder<TService1, TService2>());
     }
 
-    public IBindingStage<TService1, TService2, TService3> For<TService1, TService2, TService3>()
+    public IFallbackBindingStage<TService1, TService2, TService3> For<TService1, TService2, TService3>()
         where TService1 : class
         where TService2 : class
         where TService3 : class

@@ -4,7 +4,7 @@ using Padutronics.Reflection.Types;
 
 namespace Padutronics.DependencyInjection.Registration;
 
-internal sealed class BindingDescriptionBuilder<TService1, TService2> : BindingDescriptionBuilderBase, IBindingStage<TService1, TService2>
+internal sealed class BindingDescriptionBuilder<TService1, TService2> : BindingDescriptionBuilderBase, IFallbackBindingStage<TService1, TService2>
     where TService1 : class
     where TService2 : class
 {
@@ -12,6 +12,8 @@ internal sealed class BindingDescriptionBuilder<TService1, TService2> : BindingD
         base(TypeArray.Create<TService1, TService2>())
     {
     }
+
+    public IBindingStage<TService1, TService2> IfNone => MarkAsFallbackAndReturn(this);
 
     public ILifetimeStage Use<TImplementation>()
         where TImplementation : class, TService1, TService2

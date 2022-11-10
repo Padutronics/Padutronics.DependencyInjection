@@ -7,11 +7,12 @@ using System;
 
 namespace Padutronics.DependencyInjection.Registration;
 
-internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuilder, ILifetimeStage
+internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuilder, ILifetimeStage, IOwnershipStage
 {
     private readonly Type serviceType;
 
     private IActivator? activator;
+    private bool isOwnedByContainer = true;
 
     protected BindingDescriptionBuilderBase(Type serviceType)
     {
@@ -25,7 +26,17 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
             throw new InvalidOperationException($"Registration for service of type {serviceType} was not completed.");
         }
 
+        if (isOwnedByContainer)
+        {
+            activator = new DisposableActivator(activator);
+        }
+
         return new BindingDescription(serviceType, activator);
+    }
+
+    public void ExternallyOwned()
+    {
+        isOwnedByContainer = false;
     }
 
     public void InstancePerDependency()
@@ -33,7 +44,12 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
         // Do nothing.
     }
 
-    public void SingleInstance()
+    public void OwnedByContainer()
+    {
+        // Do nothing.
+    }
+
+    public IOwnershipStage SingleInstance()
     {
         if (activator is null)
         {
@@ -41,6 +57,8 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
         }
 
         activator = new SharedInstanceActivator(activator);
+
+        return this;
     }
 
     public ILifetimeStage Use(Type implementationType)
@@ -50,9 +68,11 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
         return this;
     }
 
-    protected void UseProvider<TImplementation>(IInstanceProvider<TImplementation> instanceProvider)
+    protected IOwnershipStage UseProvider<TImplementation>(IInstanceProvider<TImplementation> instanceProvider)
         where TImplementation : class
     {
         activator = new InstanceProviderActivator<TImplementation>(instanceProvider);
+
+        return this;
     }
 }

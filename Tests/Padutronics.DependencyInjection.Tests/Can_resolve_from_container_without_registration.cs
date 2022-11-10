@@ -19,7 +19,7 @@ internal sealed class Can_resolve_from_container_without_registration
         // Arrange.
         var containerBuilder = new ContainerBuilder();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         bool canResolve = container.CanResolve<IService>();

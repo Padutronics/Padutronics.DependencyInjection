@@ -16,6 +16,8 @@
         <RepositoryType>Git</RepositoryType>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Padutronics.Disposing" Version="0.1.0" />
+        <PackageReference Include="Padutronics.Disposing.Disposers" Version="0.1.0" />
         <PackageReference Include="Padutronics.Reflection" Version="0.1.0" />
     </ItemGroup>
 </Project>

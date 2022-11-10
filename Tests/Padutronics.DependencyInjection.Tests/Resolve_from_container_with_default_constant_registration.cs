@@ -19,10 +19,10 @@ internal sealed class Resolve_from_container_with_default_constant_registration
         // Arrange.
         var expectedService = new Service();
 
-        var containerBuider = new ContainerBuilder();
-        containerBuider.For<IService>().UseConstant(expectedService);
+        var containerBuilder = new ContainerBuilder();
+        containerBuilder.For<IService>().UseConstant(expectedService);
 
-        IContainer container = containerBuider.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         IService actualService = container.Resolve<IService>();

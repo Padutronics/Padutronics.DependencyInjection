@@ -1,12 +1,13 @@
 using Padutronics.DependencyInjection.Resolution.Activation;
 using Padutronics.DependencyInjection.Resolution.Activation.ValueProviders;
 using Padutronics.DependencyInjection.Storages;
+using Padutronics.Disposing;
 using System;
 using System.Collections.Generic;
 
 namespace Padutronics.DependencyInjection;
 
-internal sealed class Container : IContainer
+internal sealed class Container : DisposableObject, IContainer
 {
     private readonly IScope scope;
     private readonly IStorage storage;
@@ -41,7 +42,15 @@ internal sealed class Container : IContainer
 
     private ActivationSession CreateActivationSession()
     {
-        return new ActivationSession(container: this, scope, valueProviders);
+        return new ActivationSession(containerContext: this, scope, valueProviders);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        if (isDisposing)
+        {
+            scope.Dispose();
+        }
     }
 
     public object Resolve(Type serviceType)

@@ -17,9 +17,9 @@ internal sealed class BindingDescriptionBuilder<TService> : BindingDescriptionBu
         return Use(typeof(TImplementation));
     }
 
-    public void UseConstant<TImplementation>(TImplementation instance)
+    public IOwnershipStage UseConstant<TImplementation>(TImplementation instance)
         where TImplementation : class, TService
     {
-        UseProvider(new ConstantInstanceProvider<TImplementation>(instance));
+        return UseProvider(new ConstantInstanceProvider<TImplementation>(instance));
     }
 }

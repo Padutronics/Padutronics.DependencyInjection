@@ -11,8 +11,8 @@ internal sealed class BindingDescriptionBuilder : BindingDescriptionBuilderBase,
     {
     }
 
-    public void UseConstant(object instance)
+    public IOwnershipStage UseConstant(object instance)
     {
-        UseProvider(new ConstantInstanceProvider<object>(instance));
+        return UseProvider(new ConstantInstanceProvider<object>(instance));
     }
 }

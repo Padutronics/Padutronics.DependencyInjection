@@ -17,10 +17,10 @@ internal sealed class Resolve_from_container_with_default_type_registration
     public void Instance_of_registered_implementation_type_is_resolved()
     {
         // Arrange.
-        var containerBuider = new ContainerBuilder();
-        containerBuider.For<IService>().Use<Service>();
+        var containerBuilder = new ContainerBuilder();
+        containerBuilder.For<IService>().Use<Service>();
 
-        IContainer container = containerBuider.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         IService service = container.Resolve<IService>();

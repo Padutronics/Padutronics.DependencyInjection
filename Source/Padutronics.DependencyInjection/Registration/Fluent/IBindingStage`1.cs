@@ -5,6 +5,6 @@ public interface IBindingStage<in TService>
 {
     ILifetimeStage Use<TImplementation>()
         where TImplementation : class, TService;
-    void UseConstant<TImplementation>(TImplementation instance)
+    IOwnershipStage UseConstant<TImplementation>(TImplementation instance)
         where TImplementation : class, TService;
 }

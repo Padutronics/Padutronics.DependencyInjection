@@ -20,7 +20,7 @@ internal sealed class Resolve_from_container_with_transient_lifetime_registratio
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<Service>().InstancePerDependency();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         IService service1 = container.Resolve<IService>();

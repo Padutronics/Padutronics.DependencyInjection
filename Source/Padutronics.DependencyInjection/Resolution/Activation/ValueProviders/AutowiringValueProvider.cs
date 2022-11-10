@@ -4,13 +4,13 @@ namespace Padutronics.DependencyInjection.Resolution.Activation.ValueProviders;
 
 internal sealed class AutowiringValueProvider : IValueProvider
 {
-    public bool CanGetValue(ParameterInfo parameter, IContainer container)
+    public bool CanGetValue(ParameterInfo parameter, IContainerContext containerContext)
     {
-        return container.CanResolve(parameter.ParameterType);
+        return containerContext.CanResolve(parameter.ParameterType);
     }
 
-    public object? GetValue(ParameterInfo parameter, IContainer container)
+    public object? GetValue(ParameterInfo parameter, IContainerContext containerContext)
     {
-        return container.Resolve(parameter.ParameterType);
+        return containerContext.Resolve(parameter.ParameterType);
     }
 }

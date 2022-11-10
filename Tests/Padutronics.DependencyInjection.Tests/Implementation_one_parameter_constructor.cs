@@ -37,7 +37,7 @@ internal sealed class Implementation_one_parameter_constructor
         containerBuilder.For<IService>().Use<Service>();
         containerBuilder.For<IDependency>().Use<Dependency>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         IService service = container.Resolve<IService>();
@@ -53,7 +53,7 @@ internal sealed class Implementation_one_parameter_constructor
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<Service>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();

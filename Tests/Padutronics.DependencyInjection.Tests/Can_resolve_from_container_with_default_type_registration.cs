@@ -17,10 +17,10 @@ internal sealed class Can_resolve_from_container_with_default_type_registration
     public void Can_resolve_if_implementation_type_is_registered()
     {
         // Arrange.
-        var containerBuider = new ContainerBuilder();
-        containerBuider.For<IService>().Use<Service>();
+        var containerBuilder = new ContainerBuilder();
+        containerBuilder.For<IService>().Use<Service>();
 
-        IContainer container = containerBuider.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         bool canResolve = container.CanResolve<IService>();

@@ -2,6 +2,7 @@ using Padutronics.DependencyInjection.Registration;
 using Padutronics.DependencyInjection.Registration.Fluent;
 using Padutronics.DependencyInjection.Resolution.Activation.ValueProviders;
 using Padutronics.DependencyInjection.Storages;
+using Padutronics.Disposing.Disposers;
 using System;
 using System.Collections.Generic;
 
@@ -27,7 +28,7 @@ public sealed class ContainerBuilder : IContainerBuilder
             /// <see cref="DefaultValueProvider" /> must be placed last to supply default value only if all other providers have failed to supply a value.
             new DefaultValueProvider()
         };
-        var scope = new Scope();
+        var scope = new Scope(new StackDisposer());
 
         IStorage storage = BuildStorage();
 

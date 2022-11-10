@@ -57,7 +57,7 @@ internal sealed class Implementation_one_and_two_parameter_constructors_with_the
         containerBuilder.For<IService>().Use<Service>();
         containerBuilder.For<IDependency1>().Use<Dependency1>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         IService service = container.Resolve<IService>();
@@ -75,7 +75,7 @@ internal sealed class Implementation_one_and_two_parameter_constructors_with_the
         containerBuilder.For<IDependency1>().Use<Dependency1>();
         containerBuilder.For<IDependency2>().Use<Dependency2>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         IService service = container.Resolve<IService>();
@@ -92,7 +92,7 @@ internal sealed class Implementation_one_and_two_parameter_constructors_with_the
         containerBuilder.For<IService>().Use<Service>();
         containerBuilder.For<IDependency2>().Use<Dependency2>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();
@@ -108,7 +108,7 @@ internal sealed class Implementation_one_and_two_parameter_constructors_with_the
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<Service>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();

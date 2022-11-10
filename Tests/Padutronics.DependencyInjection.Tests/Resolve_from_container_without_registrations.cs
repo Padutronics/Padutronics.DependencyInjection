@@ -16,7 +16,7 @@ internal sealed class Resolve_from_container_without_registrations
         // Arrange.
         var containerBuilder = new ContainerBuilder();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();

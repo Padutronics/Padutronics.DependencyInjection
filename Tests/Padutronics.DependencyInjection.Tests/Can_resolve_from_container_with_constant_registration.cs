@@ -17,10 +17,10 @@ internal sealed class Can_resolve_from_container_with_constant_registration
     public void Can_resolve_if_constant_is_registered()
     {
         // Arrange.
-        var containerBuider = new ContainerBuilder();
-        containerBuider.For<IService>().UseConstant(new Service());
+        var containerBuilder = new ContainerBuilder();
+        containerBuilder.For<IService>().UseConstant(new Service());
 
-        IContainer container = containerBuider.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         bool canResolve = container.CanResolve<IService>();

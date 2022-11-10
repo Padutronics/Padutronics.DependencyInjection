@@ -59,7 +59,7 @@ internal sealed class Implementation_constructor_access
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<PublicService>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();
@@ -75,7 +75,7 @@ internal sealed class Implementation_constructor_access
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<InternalService>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();
@@ -91,7 +91,7 @@ internal sealed class Implementation_constructor_access
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<ProtectedService>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();
@@ -107,7 +107,7 @@ internal sealed class Implementation_constructor_access
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<ProtectedInternalService>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();
@@ -123,7 +123,7 @@ internal sealed class Implementation_constructor_access
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<PrivateService>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();
@@ -139,7 +139,7 @@ internal sealed class Implementation_constructor_access
         var containerBuilder = new ContainerBuilder();
         containerBuilder.For<IService>().Use<PrivateProtectedService>();
 
-        IContainer container = containerBuilder.Build();
+        using IContainer container = containerBuilder.Build();
 
         // Act.
         void Action() => container.Resolve<IService>();

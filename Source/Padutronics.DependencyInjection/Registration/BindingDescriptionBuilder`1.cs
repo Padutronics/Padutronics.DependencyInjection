@@ -10,9 +10,9 @@ internal sealed class BindingDescriptionBuilder<TService> : BindingDescriptionBu
     {
     }
 
-    public void Use<TImplementation>()
+    public ILifetimeStage Use<TImplementation>()
         where TImplementation : class, TService
     {
-        Use(typeof(TImplementation));
+        return Use(typeof(TImplementation));
     }
 }

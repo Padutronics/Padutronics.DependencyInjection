@@ -66,6 +66,11 @@ internal sealed class TypeActivator : IActivator
         return selectedConstructor.Invoke(parameters);
     }
 
+    public Type GetInstanceType(ActivationSession session)
+    {
+        return type;
+    }
+
     private IEnumerable<ConstructorInfo> GetInstantiableConstructors(IEnumerable<ConstructorInfo> constructors, ActivationSession session)
     {
         return constructors.Where(

@@ -8,11 +8,13 @@ namespace Padutronics.DependencyInjection;
 
 internal sealed class Container : IContainer
 {
+    private readonly IScope scope;
     private readonly IStorage storage;
     private readonly IEnumerable<IValueProvider> valueProviders;
 
-    public Container(IStorage storage, IEnumerable<IValueProvider> valueProviders)
+    public Container(IStorage storage, IScope scope, IEnumerable<IValueProvider> valueProviders)
     {
+        this.scope = scope;
         this.storage = storage;
         this.valueProviders = valueProviders;
     }
@@ -39,7 +41,7 @@ internal sealed class Container : IContainer
 
     private ActivationSession CreateActivationSession()
     {
-        return new ActivationSession(container: this, valueProviders);
+        return new ActivationSession(container: this, scope, valueProviders);
     }
 
     public object Resolve(Type serviceType)

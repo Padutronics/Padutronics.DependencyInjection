@@ -1,3 +1,4 @@
+using Padutronics.DependencyInjection.Registration.Fluent;
 using Padutronics.DependencyInjection.Resolution.Activation.Activators;
 using Padutronics.Reflection.Constructors.Finders;
 using Padutronics.Reflection.Constructors.Selectors;
@@ -5,7 +6,7 @@ using System;
 
 namespace Padutronics.DependencyInjection.Registration;
 
-internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuilder
+internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuilder, ILifetimeStage
 {
     private readonly Type serviceType;
 
@@ -26,8 +27,25 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
         return new BindingDescription(serviceType, activator);
     }
 
-    public void Use(Type implementationType)
+    public void InstancePerDependency()
+    {
+        // Do nothing.
+    }
+
+    public void SingleInstance()
+    {
+        if (activator is null)
+        {
+            throw new InvalidOperationException($"Activator for service of type {serviceType} was not configured.");
+        }
+
+        activator = new SharedInstanceActivator(activator);
+    }
+
+    public ILifetimeStage Use(Type implementationType)
     {
         activator = new TypeActivator(implementationType, new PublicConstructorFinder(), new LongestConstructorSelector());
+
+        return this;
     }
 }

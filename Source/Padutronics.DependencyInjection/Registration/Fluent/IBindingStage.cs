@@ -4,5 +4,5 @@ namespace Padutronics.DependencyInjection.Registration.Fluent;
 
 public interface IBindingStage
 {
-    void Use(Type implementationType);
+    ILifetimeStage Use(Type implementationType);
 }

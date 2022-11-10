@@ -27,10 +27,11 @@ public sealed class ContainerBuilder : IContainerBuilder
             /// <see cref="DefaultValueProvider" /> must be placed last to supply default value only if all other providers have failed to supply a value.
             new DefaultValueProvider()
         };
+        var scope = new Scope();
 
         IStorage storage = BuildStorage();
 
-        return new Container(storage, valueProviders);
+        return new Container(storage, scope, valueProviders);
     }
 
     private IStorage BuildStorage()

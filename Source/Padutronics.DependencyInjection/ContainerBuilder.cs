@@ -39,7 +39,12 @@ public sealed class ContainerBuilder : IContainerBuilder
     {
         IEnumerable<Binding> bindings = buildPlan.Build();
 
-        return new Storage(bindings);
+        var bindingBuilders = new[]
+        {
+            new EnumerableBindingBuilder()
+        };
+
+        return new Storage(bindings, bindingBuilders);
     }
 
     public IFallbackBindingStage For(params Type[] serviceTypes)

@@ -4,6 +4,7 @@ using Padutronics.DependencyInjection.Storages;
 using Padutronics.Disposing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Padutronics.DependencyInjection;
 
@@ -77,5 +78,29 @@ internal sealed class Container : DisposableObject, IContainer
         where TService : class
     {
         return (TService)Resolve(typeof(TService));
+    }
+
+    public IEnumerable<object> ResolveAll(Type serviceType)
+    {
+        IEnumerable<object> instances = Enumerable.Empty<object>();
+
+        if (storage.TryGetBinding(serviceType, out Binding? binding))
+        {
+            ActivationSession session = CreateActivationSession(serviceType);
+
+            instances = binding.ProfileProvider.AllProfiles
+                .Select(profile => profile.Activator.GetInstance(session))
+                .ToList();
+        }
+
+        return instances;
+    }
+
+    public IEnumerable<TService> ResolveAll<TService>()
+        where TService : class
+    {
+        return ResolveAll(typeof(TService))
+            .Cast<TService>()
+            .ToList();
     }
 }

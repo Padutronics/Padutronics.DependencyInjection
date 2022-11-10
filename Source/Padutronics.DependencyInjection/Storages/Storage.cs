@@ -9,10 +9,13 @@ namespace Padutronics.DependencyInjection.Storages;
 
 internal sealed class Storage : IStorage
 {
+    private readonly IEnumerable<IBindingBuilder> bindingBuilders;
     private readonly IDictionary<Type, Binding> serviceTypeToBindingMappings = new Dictionary<Type, Binding>();
 
-    public Storage(IEnumerable<Binding> bindings)
+    public Storage(IEnumerable<Binding> bindings, IEnumerable<IBindingBuilder> bindingBuilders)
     {
+        this.bindingBuilders = bindingBuilders;
+
         serviceTypeToBindingMappings = bindings.ToDictionary(
             binding => binding.ServiceType,
             binding => binding
@@ -44,21 +47,38 @@ internal sealed class Storage : IStorage
         AddBinding(serviceType, binding);
     }
 
+    private bool TryBuildBinding(Type serviceType, out Binding? binding)
+    {
+        binding = null;
+
+        foreach (IBindingBuilder bindingBuilder in bindingBuilders)
+        {
+            if (bindingBuilder.CanBuild(serviceType))
+            {
+                binding = bindingBuilder.Build(serviceType);
+                break;
+            }
+        }
+
+        return binding is not null;
+    }
+
     public bool TryGetBinding(Type serviceType, [NotNullWhen(true)] out Binding? binding)
     {
         var isBindingFound = true;
 
         if (!serviceTypeToBindingMappings.TryGetValue(serviceType, out binding))
         {
-            if (serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
-            {
-                Type openGenericServiceType = serviceType.GetGenericTypeDefinition();
-
-                isBindingFound = TryGetBinding(openGenericServiceType, out binding);
-            }
-            else
+            if (!TryBuildBinding(serviceType, out binding))
             {
                 isBindingFound = false;
+
+                if (serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
+                {
+                    Type openGenericServiceType = serviceType.GetGenericTypeDefinition();
+
+                    isBindingFound = TryGetBinding(openGenericServiceType, out binding);
+                }
             }
         }
 

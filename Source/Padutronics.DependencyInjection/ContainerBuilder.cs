@@ -42,9 +42,14 @@ public sealed class ContainerBuilder : IContainerBuilder
         return new Storage(bindings);
     }
 
-    public IBindingStage For(Type serviceType)
+    public IBindingStage For(params Type[] serviceTypes)
     {
-        return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder(serviceType));
+        return For((IEnumerable<Type>)serviceTypes);
+    }
+
+    public IBindingStage For(IEnumerable<Type> serviceTypes)
+    {
+        return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder(serviceTypes));
     }
 
     public IBindingStage<TService> For<TService>()

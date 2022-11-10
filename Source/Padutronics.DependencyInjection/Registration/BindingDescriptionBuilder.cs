@@ -1,13 +1,14 @@
 using Padutronics.DependencyInjection.Registration.Fluent;
 using Padutronics.DependencyInjection.Resolution;
 using System;
+using System.Collections.Generic;
 
 namespace Padutronics.DependencyInjection.Registration;
 
 internal sealed class BindingDescriptionBuilder : BindingDescriptionBuilderBase, IBindingStage
 {
-    public BindingDescriptionBuilder(Type serviceType) :
-        base(new[] { serviceType })
+    public BindingDescriptionBuilder(IEnumerable<Type> serviceTypes) :
+        base(serviceTypes)
     {
     }
 

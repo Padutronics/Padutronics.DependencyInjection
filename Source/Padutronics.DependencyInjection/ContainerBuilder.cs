@@ -39,9 +39,10 @@ public sealed class ContainerBuilder : IContainerBuilder
     {
         IEnumerable<Binding> bindings = buildPlan.Build();
 
-        var bindingBuilders = new[]
+        var bindingBuilders = new IBindingBuilder[]
         {
-            new EnumerableBindingBuilder()
+            new EnumerableBindingBuilder(),
+            new LazyBindingBuilder()
         };
 
         return new Storage(bindings, bindingBuilders);

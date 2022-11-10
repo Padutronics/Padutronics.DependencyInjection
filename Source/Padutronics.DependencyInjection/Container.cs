@@ -10,15 +10,15 @@ namespace Padutronics.DependencyInjection;
 
 internal sealed class Container : DisposableObject, IContainer
 {
+    private readonly IEnumerable<IValueProvider> defaultValueProviders;
     private readonly IScope scope;
     private readonly IStorage storage;
-    private readonly IEnumerable<IValueProvider> valueProviders;
 
-    public Container(IStorage storage, IScope scope, IEnumerable<IValueProvider> valueProviders)
+    public Container(IStorage storage, IScope scope, IEnumerable<IValueProvider> defaultValueProviders)
     {
+        this.defaultValueProviders = defaultValueProviders;
         this.scope = scope;
         this.storage = storage;
-        this.valueProviders = valueProviders;
 
         AddAdditionalBindings(storage);
     }
@@ -29,13 +29,18 @@ internal sealed class Container : DisposableObject, IContainer
         storage.AddConstantBinding<IContainerContext>(this);
     }
 
-    public bool CanResolve(Type serviceType)
+    public bool CanResolve(Type serviceType, params IValueProvider[] valueProviders)
+    {
+        return CanResolve(serviceType, (IEnumerable<IValueProvider>)valueProviders);
+    }
+
+    public bool CanResolve(Type serviceType, IEnumerable<IValueProvider> valueProviders)
     {
         var canResolve = false;
 
         if (storage.TryGetBinding(serviceType, out Binding? binding))
         {
-            ActivationSession session = CreateActivationSession(serviceType);
+            ActivationSession session = CreateActivationSession(serviceType, valueProviders);
 
             canResolve = binding.ProfileProvider.DefaultProfile.Activator.CanGetInstance(session);
         }
@@ -43,15 +48,21 @@ internal sealed class Container : DisposableObject, IContainer
         return canResolve;
     }
 
-    public bool CanResolve<TService>()
+    public bool CanResolve<TService>(params IValueProvider[] valueProviders)
         where TService : class
     {
-        return CanResolve(typeof(TService));
+        return CanResolve<TService>((IEnumerable<IValueProvider>)valueProviders);
     }
 
-    private ActivationSession CreateActivationSession(Type serviceType)
+    public bool CanResolve<TService>(IEnumerable<IValueProvider> valueProviders)
+        where TService : class
     {
-        return new ActivationSession(serviceType, containerContext: this, scope, valueProviders);
+        return CanResolve(typeof(TService), valueProviders);
+    }
+
+    private ActivationSession CreateActivationSession(Type serviceType, IEnumerable<IValueProvider> valueProviders)
+    {
+        return new ActivationSession(serviceType, containerContext: this, scope, defaultValueProviders, valueProviders);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -62,11 +73,16 @@ internal sealed class Container : DisposableObject, IContainer
         }
     }
 
-    public object Resolve(Type serviceType)
+    public object Resolve(Type serviceType, params IValueProvider[] valueProviders)
+    {
+        return Resolve(serviceType, (IEnumerable<IValueProvider>)valueProviders);
+    }
+
+    public object Resolve(Type serviceType, IEnumerable<IValueProvider> valueProviders)
     {
         if (storage.TryGetBinding(serviceType, out Binding? binding))
         {
-            ActivationSession session = CreateActivationSession(serviceType);
+            ActivationSession session = CreateActivationSession(serviceType, valueProviders);
 
             return binding.ProfileProvider.DefaultProfile.Activator.GetInstance(session);
         }
@@ -74,19 +90,30 @@ internal sealed class Container : DisposableObject, IContainer
         throw new InvalidOperationException($"Service of type {serviceType} is not registered.");
     }
 
-    public TService Resolve<TService>()
+    public TService Resolve<TService>(params IValueProvider[] valueProviders)
         where TService : class
     {
-        return (TService)Resolve(typeof(TService));
+        return Resolve<TService>((IEnumerable<IValueProvider>)valueProviders);
     }
 
-    public IEnumerable<object> ResolveAll(Type serviceType)
+    public TService Resolve<TService>(IEnumerable<IValueProvider> valueProviders)
+        where TService : class
+    {
+        return (TService)Resolve(typeof(TService), valueProviders);
+    }
+
+    public IEnumerable<object> ResolveAll(Type serviceType, params IValueProvider[] valueProviders)
+    {
+        return ResolveAll(serviceType, (IEnumerable<IValueProvider>)valueProviders);
+    }
+
+    public IEnumerable<object> ResolveAll(Type serviceType, IEnumerable<IValueProvider> valueProviders)
     {
         IEnumerable<object> instances = Enumerable.Empty<object>();
 
         if (storage.TryGetBinding(serviceType, out Binding? binding))
         {
-            ActivationSession session = CreateActivationSession(serviceType);
+            ActivationSession session = CreateActivationSession(serviceType, valueProviders);
 
             instances = binding.ProfileProvider.AllProfiles
                 .Select(profile => profile.Activator.GetInstance(session))
@@ -96,10 +123,16 @@ internal sealed class Container : DisposableObject, IContainer
         return instances;
     }
 
-    public IEnumerable<TService> ResolveAll<TService>()
+    public IEnumerable<TService> ResolveAll<TService>(params IValueProvider[] valueProviders)
         where TService : class
     {
-        return ResolveAll(typeof(TService))
+        return ResolveAll<TService>((IEnumerable<IValueProvider>)valueProviders);
+    }
+
+    public IEnumerable<TService> ResolveAll<TService>(IEnumerable<IValueProvider> valueProviders)
+        where TService : class
+    {
+        return ResolveAll(typeof(TService), valueProviders)
             .Cast<TService>()
             .ToList();
     }

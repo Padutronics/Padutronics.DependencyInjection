@@ -78,6 +78,11 @@ internal abstract class BindingDescriptionBuilderBase : IBindingDescriptionBuild
         return this;
     }
 
+    public void UseFactory()
+    {
+        activator = new FactoryActivator(serviceTypes.Single());
+    }
+
     protected IOwnershipStage UseProvider<TImplementation>(IInstanceProvider<TImplementation> instanceProvider)
         where TImplementation : class
     {

@@ -37,7 +37,7 @@ internal sealed class TypeActivator : IActivator
             {
                 var canGetValue = false;
 
-                foreach (IValueProvider valueProviders in session.ValueProviders)
+                foreach (IValueProvider valueProviders in session.AllValueProviders)
                 {
                     if (valueProviders.CanGetValue(parameter, session.ContainerContext))
                     {
@@ -83,7 +83,7 @@ internal sealed class TypeActivator : IActivator
             constructor => constructor
                 .GetParameters()
                 .All(
-                    parameter => session.ValueProviders.Any(
+                    parameter => session.AllValueProviders.Any(
                         valueProvider => valueProvider.CanGetValue(
                             parameter,
                             session.ContainerContext
@@ -102,7 +102,7 @@ internal sealed class TypeActivator : IActivator
         {
             var canGetValue = false;
 
-            foreach (IValueProvider valueProvider in session.ValueProviders)
+            foreach (IValueProvider valueProvider in session.AllValueProviders)
             {
                 if (valueProvider.CanGetValue(parameter, session.ContainerContext))
                 {

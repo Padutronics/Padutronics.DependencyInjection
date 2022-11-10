@@ -22,7 +22,7 @@ internal sealed class LazyActivator : IActivator
 
     public bool CanGetInstance(ActivationSession session)
     {
-        return session.ContainerContext.CanResolve(valueType);
+        return session.ContainerContext.CanResolve(valueType, session.AdditionalValueProviders);
     }
 
     public object GetInstance(ActivationSession session)
@@ -51,6 +51,6 @@ internal sealed class LazyActivator : IActivator
     private Lazy<TValue> Resolve<TValue>(ActivationSession session)
         where TValue : class
     {
-        return new Lazy<TValue>(() => session.ContainerContext.Resolve<TValue>());
+        return new Lazy<TValue>(() => session.ContainerContext.Resolve<TValue>(session.AdditionalValueProviders));
     }
 }

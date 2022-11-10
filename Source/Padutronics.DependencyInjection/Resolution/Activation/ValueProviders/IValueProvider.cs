@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace Padutronics.DependencyInjection.Resolution.Activation.ValueProviders;
 
-internal interface IValueProvider
+public interface IValueProvider
 {
     bool CanGetValue(ParameterInfo parameter, IContainerContext containerContext);
     object? GetValue(ParameterInfo parameter, IContainerContext containerContext);

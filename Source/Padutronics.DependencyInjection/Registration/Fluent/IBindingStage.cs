@@ -6,5 +6,6 @@ public interface IBindingStage
 {
     ILifetimeStage Use(Type implementationType);
     IOwnershipStage UseConstant(object instance);
+    void UseFactory();
     ILifetimeStage UseSelf();
 }

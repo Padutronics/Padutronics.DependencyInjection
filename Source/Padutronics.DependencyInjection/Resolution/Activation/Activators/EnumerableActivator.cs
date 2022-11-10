@@ -52,6 +52,6 @@ internal sealed class EnumerableActivator : IActivator
     private IEnumerable<TItem> Resolve<TItem>(ActivationSession session)
         where TItem : class
     {
-        return session.ContainerContext.ResolveAll<TItem>();
+        return session.ContainerContext.ResolveAll<TItem>(session.AdditionalValueProviders);
     }
 }

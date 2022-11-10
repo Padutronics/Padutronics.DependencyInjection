@@ -18,6 +18,14 @@ internal sealed class Container : DisposableObject, IContainer
         this.scope = scope;
         this.storage = storage;
         this.valueProviders = valueProviders;
+
+        AddAdditionalBindings(storage);
+    }
+
+    private void AddAdditionalBindings(IStorage storage)
+    {
+        storage.AddConstantBinding<IContainer>(this);
+        storage.AddConstantBinding<IContainerContext>(this);
     }
 
     public bool CanResolve(Type serviceType)

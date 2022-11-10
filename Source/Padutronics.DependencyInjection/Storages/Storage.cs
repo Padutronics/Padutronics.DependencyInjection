@@ -1,3 +1,5 @@
+using Padutronics.DependencyInjection.Resolution;
+using Padutronics.DependencyInjection.Resolution.Activation.Activators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -7,7 +9,7 @@ namespace Padutronics.DependencyInjection.Storages;
 
 internal sealed class Storage : IStorage
 {
-    private readonly IReadOnlyDictionary<Type, Binding> serviceTypeToBindingMappings = new Dictionary<Type, Binding>();
+    private readonly IDictionary<Type, Binding> serviceTypeToBindingMappings = new Dictionary<Type, Binding>();
 
     public Storage(IEnumerable<Binding> bindings)
     {
@@ -15,6 +17,21 @@ internal sealed class Storage : IStorage
             binding => binding.ServiceType,
             binding => binding
         );
+    }
+
+    public void AddBinding(Type serviceType, Binding binding)
+    {
+        serviceTypeToBindingMappings.Add(serviceType, binding);
+    }
+
+    public void AddConstantBinding<TImplementation>(TImplementation instance)
+        where TImplementation : class
+    {
+        Type serviceType = typeof(TImplementation);
+
+        var binding = new Binding(serviceType, new InstanceProviderActivator<TImplementation>(new ConstantInstanceProvider<TImplementation>(instance)));
+
+        AddBinding(serviceType, binding);
     }
 
     public bool TryGetBinding(Type serviceType, [NotNullWhen(true)] out Binding? binding)

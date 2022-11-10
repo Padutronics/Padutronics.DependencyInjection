@@ -11,4 +11,8 @@ public interface IContainerBuilder
     IBindingStage<TService1, TService2> For<TService1, TService2>()
         where TService1 : class
         where TService2 : class;
+    IBindingStage<TService1, TService2, TService3> For<TService1, TService2, TService3>()
+        where TService1 : class
+        where TService2 : class
+        where TService3 : class;
 }

@@ -59,4 +59,12 @@ public sealed class ContainerBuilder : IContainerBuilder
     {
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder<TService1, TService2>());
     }
+
+    public IBindingStage<TService1, TService2, TService3> For<TService1, TService2, TService3>()
+        where TService1 : class
+        where TService2 : class
+        where TService3 : class
+    {
+        return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder<TService1, TService2, TService3>());
+    }
 }

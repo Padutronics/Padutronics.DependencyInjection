@@ -22,6 +22,8 @@ public sealed class ContainerBuilder : IContainerBuilder
 
     public IContainer Build()
     {
+        IStorage storage = BuildStorage();
+
         var valueProviders = new IValueProvider[]
         {
             new AutowiringValueProvider(),
@@ -29,8 +31,6 @@ public sealed class ContainerBuilder : IContainerBuilder
             new DefaultValueProvider()
         };
         var scope = new Scope(new StackDisposer());
-
-        IStorage storage = BuildStorage();
 
         return new Container(storage, scope, valueProviders);
     }

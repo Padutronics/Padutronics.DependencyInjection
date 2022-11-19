@@ -3,8 +3,12 @@ using Padutronics.DependencyInjection.Registration.Fluent;
 using Padutronics.DependencyInjection.Resolution.Activation.ValueProviders;
 using Padutronics.DependencyInjection.Storages;
 using Padutronics.Disposing.Disposers;
+using Padutronics.Reflection.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
+using Trace = Padutronics.Diagnostics.Tracing.Trace<Padutronics.DependencyInjection.ContainerBuilder>;
 
 namespace Padutronics.DependencyInjection;
 
@@ -22,6 +26,8 @@ public sealed class ContainerBuilder : IContainerBuilder
 
     public IContainer Build()
     {
+        Trace.CallStart("Started container building.");
+
         IStorage storage = BuildStorage();
 
         var valueProviders = new IValueProvider[]
@@ -32,11 +38,17 @@ public sealed class ContainerBuilder : IContainerBuilder
         };
         var scope = new Scope(new StackDisposer());
 
-        return new Container(storage, scope, valueProviders);
+        var container = new Container(storage, scope, valueProviders);
+
+        Trace.CallEnd("Finished container building.");
+
+        return container;
     }
 
     private IStorage BuildStorage()
     {
+        Trace.CallStart("Started storage building.");
+
         IEnumerable<Binding> bindings = buildPlan.Build();
 
         var bindingBuilders = new IBindingBuilder[]
@@ -45,7 +57,11 @@ public sealed class ContainerBuilder : IContainerBuilder
             new LazyBindingBuilder()
         };
 
-        return new Storage(bindings, bindingBuilders);
+        var storage = new Storage(bindings, bindingBuilders);
+
+        Trace.CallEnd("Finished storage building.");
+
+        return storage;
     }
 
     public IFallbackBindingStage For(params Type[] serviceTypes)
@@ -55,12 +71,16 @@ public sealed class ContainerBuilder : IContainerBuilder
 
     public IFallbackBindingStage For(IEnumerable<Type> serviceTypes)
     {
+        Trace.Call($"Started registration of services: {string.Join(", ", serviceTypes.Select(serviceType => serviceType))}.");
+
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder(serviceTypes));
     }
 
     public IFallbackBindingStage<TService> For<TService>()
         where TService : class
     {
+        Trace.Call($"Started registration of service: {typeof(TService)}.");
+
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder<TService>());
     }
 
@@ -68,6 +88,8 @@ public sealed class ContainerBuilder : IContainerBuilder
         where TService1 : class
         where TService2 : class
     {
+        Trace.Call($"Started registration of services: {string.Join(", ", TypeArray.Create<TService1, TService2>().Select(serviceType => serviceType))}.");
+
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder<TService1, TService2>());
     }
 
@@ -76,12 +98,19 @@ public sealed class ContainerBuilder : IContainerBuilder
         where TService2 : class
         where TService3 : class
     {
+        Trace.Call($"Started registration of services: {string.Join(", ", TypeArray.Create<TService1, TService2, TService3>().Select(serviceType => serviceType))}.");
+
         return AddBindingDescriptionBuilderToBuildPlan(new BindingDescriptionBuilder<TService1, TService2, TService3>());
     }
 
     public IContainerBuilder IncludeModule(IContainerModule module)
     {
+        Trace.CallStart();
+        Trace.Information($"Including module: {module.GetType()}.");
+
         module.Load(containerBuilder: this);
+
+        Trace.CallEnd();
 
         return this;
     }

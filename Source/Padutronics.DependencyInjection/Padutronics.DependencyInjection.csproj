@@ -17,6 +17,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Padutronics.Diagnostics.Debugging" Version="0.2.0" />
+        <PackageReference Include="Padutronics.Diagnostics.Tracing" Version="0.1.0" />
         <PackageReference Include="Padutronics.Disposing" Version="0.1.0" />
         <PackageReference Include="Padutronics.Disposing.Disposers" Version="0.1.0" />
         <PackageReference Include="Padutronics.Extensions.System" Version="0.1.0" />

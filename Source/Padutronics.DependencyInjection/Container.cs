@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Trace = Padutronics.Diagnostics.Tracing.Trace<Padutronics.DependencyInjection.Container>;
+
 namespace Padutronics.DependencyInjection;
 
 internal sealed class Container : DisposableObject, IContainer
@@ -67,10 +69,14 @@ internal sealed class Container : DisposableObject, IContainer
 
     protected override void Dispose(bool isDisposing)
     {
+        Trace.CallStart("Started container disposing.");
+
         if (isDisposing)
         {
             scope.Dispose();
         }
+
+        Trace.CallEnd("Finished container disposing.");
     }
 
     public object Resolve(Type serviceType, params IValueProvider[] valueProviders)
@@ -80,14 +86,25 @@ internal sealed class Container : DisposableObject, IContainer
 
     public object Resolve(Type serviceType, IEnumerable<IValueProvider> valueProviders)
     {
-        if (storage.TryGetBinding(serviceType, out Binding? binding))
+        try
         {
-            ActivationSession session = CreateActivationSession(serviceType, valueProviders);
+            Trace.CallStart($"Requested service {serviceType}.");
 
-            return binding.ProfileProvider.DefaultProfile.Activator.GetInstance(session);
+            if (storage.TryGetBinding(serviceType, out Binding? binding))
+            {
+                ActivationSession session = CreateActivationSession(serviceType, valueProviders);
+
+                return binding.ProfileProvider.DefaultProfile.Activator.GetInstance(session);
+            }
+
+            Trace.Error($"Requested service {serviceType} is not resolved.");
+
+            throw new InvalidOperationException($"Service of type {serviceType} is not registered.");
         }
-
-        throw new InvalidOperationException($"Service of type {serviceType} is not registered.");
+        finally
+        {
+            Trace.CallEnd();
+        }
     }
 
     public TService Resolve<TService>(params IValueProvider[] valueProviders)
@@ -109,18 +126,33 @@ internal sealed class Container : DisposableObject, IContainer
 
     public IEnumerable<object> ResolveAll(Type serviceType, IEnumerable<IValueProvider> valueProviders)
     {
-        IEnumerable<object> instances = Enumerable.Empty<object>();
-
-        if (storage.TryGetBinding(serviceType, out Binding? binding))
+        try
         {
-            ActivationSession session = CreateActivationSession(serviceType, valueProviders);
+            Trace.CallStart($"Requested service {serviceType}.");
 
-            instances = binding.ProfileProvider.AllProfiles
-                .Select(profile => profile.Activator.GetInstance(session))
-                .ToList();
+            IEnumerable<object> instances;
+
+            if (storage.TryGetBinding(serviceType, out Binding? binding))
+            {
+                ActivationSession session = CreateActivationSession(serviceType, valueProviders);
+
+                instances = binding.ProfileProvider.AllProfiles
+                    .Select(profile => profile.Activator.GetInstance(session))
+                    .ToList();
+            }
+            else
+            {
+                Trace.Warning($"Requested service {serviceType} is not resolved.");
+
+                instances = Enumerable.Empty<object>();
+            }
+
+            return instances;
         }
-
-        return instances;
+        finally
+        {
+            Trace.CallEnd();
+        }
     }
 
     public IEnumerable<TService> ResolveAll<TService>(params IValueProvider[] valueProviders)
